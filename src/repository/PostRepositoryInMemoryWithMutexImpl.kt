@@ -64,7 +64,22 @@ class PostRepositoryInMemoryWithMutexImpl : PostRepository {
     }
 
     override suspend fun dislikeById(id: Long): PostModel? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        mutex.withLock {
+            return when (val index = items.indexOfFirst { it.id == id }) {
+                -1 -> null
+                else -> {
+                    val item = items[index]
+                    val copy = item.copy(likes = item.likes - 1)
+                    try {
+                        items[index] = copy
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        println("size: ${items.size}")
+                        println(index)
+                    }
+                    copy
+                }
+            }
+        }
     }
 }
 
