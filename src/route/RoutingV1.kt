@@ -1,21 +1,23 @@
 package com.example.route
 
-import io.ktor.application.call
-import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
-import io.ktor.features.ParameterConversionException
-import io.ktor.http.content.*
-import io.ktor.request.receive
-import io.ktor.request.receiveMultipart
-import io.ktor.response.respond
-import io.ktor.routing.*
-import com.example.dto.AuthenticationRequestDto
 import com.example.dto.PostRequestDto
+import com.example.dto.RegistrationRequestDto
 import com.example.dto.UserResponseDto
 import com.example.model.UserModel
+import com.example.repository.PostRepository
 import com.example.service.FileService
 import com.example.service.PostService
 import com.example.service.UserService
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import org.kodein.di.generic.instance
+import org.kodein.di.ktor.kodein
 
 class RoutingV1(
     private val staticPath: String,
@@ -32,11 +34,13 @@ class RoutingV1(
 
                 route("/") {
                     post("/registration") {
-                        TODO()
+                        val input = call.receive<RegistrationRequestDto>()
+                        val response = userService.save(input.username, input.password)
+                        call.respond(response)
                     }
 
                     post("/authentication") {
-                        val input = call.receive<AuthenticationRequestDto>()
+                        val input = call.receive<RegistrationRequestDto>()
                         val response = userService.authenticate(input)
                         call.respond(response)
                     }
@@ -70,19 +74,26 @@ class RoutingV1(
                         }
                         delete("/{id}") {
                             val me = call.authentication.principal<UserModel>()!!
-                            // в me - информация о текущем пользователе
-                            TODO()
+                            val repo by kodein().instance<PostRepository>()
+                            val id = call.parameters["id"]?.toLongOrNull() ?: throw ParameterConversionException(
+                                "id",
+                                "Long"
+                            )
+                            repo.removeById(id)
+                            call.respond(HttpStatusCode.NoContent)
+                        }
+                    }
+
+                    route("/media") {
+                        post {
+                            val me = call.authentication.principal<UserModel>()!!
+                            val multipart = call.receiveMultipart()
+                            val response = fileService.save(multipart)
+                            call.respond(response)
                         }
                     }
                 }
 
-                route("/media") {
-                    post {
-                        val multipart = call.receiveMultipart()
-                        val response = fileService.save(multipart)
-                        call.respond(response)
-                    }
-                }
             }
         }
     }

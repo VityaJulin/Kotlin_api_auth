@@ -1,16 +1,12 @@
 package com.example.service
 
-import io.ktor.features.BadRequestException
-import io.ktor.features.UnsupportedMediaTypeException
-import io.ktor.http.ContentType
-import io.ktor.http.content.MultiPartData
-import io.ktor.http.content.PartData
-import io.ktor.http.content.forEachPart
-import io.ktor.http.content.streamProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import com.example.dto.MediaResponseDto
 import com.example.model.MediaType
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.http.content.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -31,7 +27,6 @@ class FileService(private val uploadPath: String) {
             when (part) {
                 is PartData.FileItem -> {
                     if (part.name == "file") {
-                        // TODO: use Apache Tika for content detection
                         if (!images.contains(part.contentType)) {
                             throw UnsupportedMediaTypeException(part.contentType ?: ContentType.Any)
                         }

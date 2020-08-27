@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.exception.ConfigurationException
+import com.example.exception.UnauthorisedAccessException
 import com.example.repository.PostRepository
 import com.example.repository.PostRepositoryInMemoryWithMutexImpl
 import com.example.repository.UserRepository
@@ -55,7 +55,7 @@ fun Application.module() {
 
     install(KodeinFeature) {
         constant(tag = "upload-dir") with (environment.config.propertyOrNull("example.upload.dir")?.getString()
-            ?: throw ConfigurationException("Upload dir is not specified"))
+            ?: throw UnauthorisedAccessException("Upload dir is not specified"))
         bind<PasswordEncoder>() with eagerSingleton { BCryptPasswordEncoder() }
         bind<JWTTokenService>() with eagerSingleton { JWTTokenService() }
         bind<PostRepository>() with eagerSingleton { PostRepositoryInMemoryWithMutexImpl() }
@@ -86,6 +86,9 @@ fun Application.module() {
             val userService by kodein().instance<UserService>()
 
             validate {
+                challenge {defaultScheme, realm ->
+                    call.request.call.respond(HttpStatusCode.Forbidden)
+                }
                 val id = it.payload.getClaim("id").asLong()
                 userService.getModelById(id)
             }
