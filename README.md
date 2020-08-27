@@ -1,1 +1,1 @@
-https://ctor-netology-kotlin.herokuapp.com/
+https://auth-netology-kotlin.herokuapp.com/
