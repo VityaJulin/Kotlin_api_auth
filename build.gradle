@@ -42,3 +42,5 @@ dependencies {
     implementation "com.jayway.jsonpath:json-path:2.4.0"
 
 }
+
+task stage(dependsOn: installDist)
