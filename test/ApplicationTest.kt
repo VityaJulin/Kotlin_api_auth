@@ -24,7 +24,7 @@ class ApplicationTest {
     private val uploadPath = Files.createTempDirectory("test").toString()
     private val configure: Application.() -> Unit = {
         (environment.config as MapApplicationConfig).apply {
-            put("ncraft.upload.dir", uploadPath)
+            put("example.upload.dir", uploadPath)
         }
         module()
     }
@@ -38,7 +38,7 @@ class ApplicationTest {
                     multipartBoundary,
                     listOf(
                         PartData.FileItem({
-                            Files.newInputStream(Paths.get("./src/test/resources/test.png")).asInput()
+                            Files.newInputStream(Paths.get("./upload/logo.png")).asInput()
                         }, {}, headersOf(
                             HttpHeaders.ContentDisposition to listOf(
                                 ContentDisposition.File.withParameter(
