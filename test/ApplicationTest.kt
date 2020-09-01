@@ -38,7 +38,7 @@ class ApplicationTest {
                     multipartBoundary,
                     listOf(
                         PartData.FileItem({
-                            Files.newInputStream(Paths.get("./upload/logo.png")).asInput()
+                            Files.newInputStream(Paths.get("./uploads/logo.png")).asInput()
                         }, {}, headersOf(
                             HttpHeaders.ContentDisposition to listOf(
                                 ContentDisposition.File.withParameter(

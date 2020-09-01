@@ -84,16 +84,15 @@ class RoutingV1(
                         }
                     }
 
-                    route("/media") {
-                        post {
-                            val me = call.authentication.principal<UserModel>()!!
-                            val multipart = call.receiveMultipart()
-                            val response = fileService.save(multipart)
-                            call.respond(response)
-                        }
-                    }
                 }
 
+                route("/media") {
+                    post {
+                        val multipart = call.receiveMultipart()
+                        val response = fileService.save(multipart)
+                        call.respond(response)
+                    }
+                }
             }
         }
     }
