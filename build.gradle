@@ -38,8 +38,8 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:1.2.3"
     implementation 'org.kodein.di:kodein-di-generic-jvm:6.3.3'
     implementation 'org.kodein.di:kodein-di-framework-ktor-server-jvm:6.3.3'
-    implementation "io.ktor:ktor-server-tests:1.2.4"
-    implementation "com.jayway.jsonpath:json-path:2.4.0"
+    testImplementation "io.ktor:ktor-server-tests:1.2.4"
+    testImplementation "com.jayway.jsonpath:json-path:2.4.0"
 
 }
 
